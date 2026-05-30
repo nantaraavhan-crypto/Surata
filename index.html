@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>SURATA - Your AI Career Companion</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #0f172a;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    nav {
+      width: 100%;
+      padding: 20px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
+    }
+
+    .logo {
+      font-size: 34px;
+      font-weight: bold;
+      color: #38bdf8;
+      letter-spacing: 2px;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 30px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      transition: 0.3s;
+      font-size: 17px;
+    }
+
+    nav ul li a:hover {
+      color: #38bdf8;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 140px 8%;
+      background: linear-gradient(to right, #0f172a, #1e293b);
+    }
+
+    .hero-content h1 {
+      font-size: 80px;
+      color: #38bdf8;
+      margin-bottom: 20px;
+    }
+
+    .hero-content p {
+      font-size: 24px;
+      color: #cbd5e1;
+      line-height: 1.7;
+      margin-bottom: 35px;
+      max-width: 900px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 15px 35px;
+      background: #38bdf8;
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 18px;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #0ea5e9;
+      transform: scale(1.05);
+    }
+
+    .features {
+      padding: 100px 8%;
+      background: #111827;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 52px;
+      color: #38bdf8;
+      margin-bottom: 60px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 20px;
+      transition: 0.3s;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
+    }
+
+    .card h3 {
+      color: #38bdf8;
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+
+    .card p {
+      color: #cbd5e1;
+      line-height: 1.7;
+    }
+
+    .about {
+      padding: 100px 8%;
+      text-align: center;
+      background: #0f172a;
+    }
+
+    .about p {
+      max-width: 950px;
+      margin: auto;
+      color: #cbd5e1;
+      line-height: 1.9;
+      font-size: 20px;
+      margin-top: 25px;
+    }
+
+    .contact {
+      padding: 100px 8%;
+      background: #111827;
+      text-align: center;
+    }
+
+    .contact-box {
+      max-width: 700px;
+      margin: auto;
+      background: #1e293b;
+      padding: 40px;
+      border-radius: 20px;
+    }
+
+    .contact-box h3 {
+      font-size: 35px;
+      margin-bottom: 25px;
+      color: #38bdf8;
+    }
+
+    .contact-box p {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #cbd5e1;
+    }
+
+    .cta {
+      padding: 100px 8%;
+      text-align: center;
+      background: linear-gradient(to right, #0284c7, #0ea5e9);
+    }
+
+    .cta h2 {
+      font-size: 52px;
+      margin-bottom: 30px;
+    }
+
+    footer {
+      background: #020617;
+      text-align: center;
+      padding: 30px;
+      color: #94a3b8;
+      font-size: 16px;
+    }
+
+    @media(max-width:768px) {
+
+      nav ul {
+        display: none;
+      }
+
+      .hero-content h1 {
+        font-size: 50px;
+      }
+
+      .hero-content p {
+        font-size: 20px;
+      }
+
+      .section-title {
+        font-size: 38px;
+      }
+
+      .cta h2 {
+        font-size: 38px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+
+    <div class="logo">SURATA</div>
+
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+
+  </nav>
+
+  <section class="hero">
+
+    <div class="hero-content">
+
+      <h1>SURATA</h1>
+
+      <p>
+        India’s AI Powered Career & Opportunity Platform
+        for Government Exams, Internships, Placements,
+        IIT/IIM News, Career Growth and Smart Learning.
+      </p>
+
+      <a href="#features" class="btn">Explore Now</a>
+
+    </div>
+
+  </section>
+
+  <section class="features" id="features">
+
+    <h2 class="section-title">What SURATA Provides</h2>
+
+    <div class="feature-grid">
+
+      <div class="card">
+        <h3>Government Exam Alerts</h3>
+        <p>
+          Instant updates about UPSC, SSC, Banking,
+          Railways, JEE, NEET and more.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Internship Opportunities</h3>
+        <p>
+          AI curated internships from LinkedIn,
+          Internshala, IITs and company portals.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Placement Preparation</h3>
+        <p>
+          Resume guidance, aptitude preparation,
+          interview support and hiring updates.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>AI Summaries</h3>
+        <p>
+          Long reports and notifications converted
+          into short easy-to-understand summaries.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Personalized Feed</h3>
+        <p>
+          Opportunities customized according to
+          your goals, interests and skills.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Career AI Assistant</h3>
+        <p>
+          Get AI guidance for placements,
+          internships, exams and career growth.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <section class="about" id="about">
+
+    <h2 class="section-title">About SURATA</h2>
+
+    <p>
+      SURATA is being built to solve one major problem:
+      students and aspirants miss life-changing opportunities
+      because information is scattered across hundreds of websites,
+      apps and channels.
+      <br><br>
+      SURATA combines AI, automation and opportunity intelligence
+      into one unified platform helping students discover internships,
+      placements, government exams and career opportunities faster than ever.
+    </p>
+
+  </section>
+
+  <section class="contact" id="contact">
+
+    <div class="contact-box">
+
+      <h3>Contact SURATA</h3>
+
+      <p>📧 Email: surata12q@gmail.com</p>
+
+      <p>📞 Phone: +91 8228874346</p>
+
+      <p>
+        For partnerships, internships,
+        collaborations and opportunities,
+        connect with SURATA.
+      </p>
+
+    </div>
+
+  </section>
+
+  <section class="cta">
+
+    <h2>Start Your Career Journey With SURATA</h2>
+
+    <a href="#" class="btn">Join SURATA</a>
+
+  </section>
+
+  <footer>
+
+    <p>
+      © 2026 SURATA | Your AI Career Companion
+    </p>
+
+  </footer>
+
+</body>
+
+</html>
