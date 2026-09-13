@@ -96,9 +96,8 @@ export default function PrivateJobsPage() {
 
         {isLoading && allJobs.length === 0 && (
           <div className="flex flex-col items-center py-20">
-            <div className="text-5xl mb-3 animate-spin">Loading</div>
-            <p className="text-lg text-slate-300">Scraping private job portals...</p>
-            <p className="text-xs text-slate-500 mt-1">Fetching from Indeed, Naukri, LinkedIn, Foundit</p>
+            <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mb-3" />
+            <p className="text-sm text-slate-400">Loading...</p>
           </div>
         )}
 

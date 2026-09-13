@@ -70,7 +70,7 @@ export default function ResultsPage() {
               onChange={(e) => setSearch(e.target.value)}
             />
             <button onClick={fetchData} className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 rounded-lg font-bold text-sm transition">
-              {loading ? "Scraping..." : "Refresh Live"}
+              {loading ? "Loading..." : "Refresh"}
             </button>
           </div>
 
@@ -85,16 +85,15 @@ export default function ResultsPage() {
             ))}
           </div>
 
-          {lastUpdate && <p className="text-xs text-slate-600 mt-3">Scraped: {new Date(lastUpdate).toLocaleString("en-IN")} • Refreshes every 30 min</p>}
+          {lastUpdate && <p className="text-xs text-slate-600 mt-3">Last updated: {new Date(lastUpdate).toLocaleString("en-IN")}</p>}
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6">
-        {loading && (
+        {loading && results.length === 0 && (
           <div className="flex flex-col items-center py-20">
-            <div className="text-5xl mb-3 animate-spin">⚡</div>
-            <p className="text-lg text-slate-300">Scraping official links from SarkariResult...</p>
-            <p className="text-xs text-slate-500 mt-1">Following each page to find actual government URLs</p>
+            <div className="w-8 h-8 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin mb-3" />
+            <p className="text-sm text-slate-400">Loading results...</p>
           </div>
         )}
 

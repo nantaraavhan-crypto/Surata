@@ -88,9 +88,8 @@ export default function IITsIIMsPage() {
       <div className="max-w-6xl mx-auto px-4 py-6">
         {isLoading && allNews.length === 0 && (
           <div className="flex flex-col items-center py-20">
-            <div className="text-5xl mb-3 animate-spin">Loading</div>
-            <p className="text-lg text-slate-300">Scraping IIT and IIM websites...</p>
-            <p className="text-xs text-slate-500 mt-1">Checking 30+ institute portals</p>
+            <div className="w-8 h-8 border-2 border-orange-400 border-t-transparent rounded-full animate-spin mb-3" />
+            <p className="text-sm text-slate-400">Loading...</p>
           </div>
         )}
 

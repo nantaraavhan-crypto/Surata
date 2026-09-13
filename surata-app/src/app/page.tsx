@@ -8,7 +8,6 @@ import { examCalendar, admitCards, results } from "./data/exams";
 import { hackathons } from "./data/college";
 import { useLiveUpdates } from "@/hooks/useLiveUpdates";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
-import { SectionHeader, CardSkeleton } from "@/components/ui";
 
 interface UpdateItem {
   id: string;
@@ -110,14 +109,14 @@ export default function Home() {
   }, [searchQuery, router]);
 
   const quickLinks = [
-    { title: "Government Jobs", href: "/government-jobs", color: "from-cyan-500 to-cyan-600", icon: "🏛️" },
-    { title: "Private Jobs", href: "/private-jobs", color: "from-blue-500 to-blue-600", icon: "💼" },
-    { title: "Internships", href: "/internships", color: "from-emerald-500 to-emerald-600", icon: "🎓" },
-    { title: "Scholarships", href: "/scholarships", color: "from-purple-500 to-purple-600", icon: "🎯" },
-    { title: "Hackathons", href: "/college", color: "from-pink-500 to-pink-600", icon: "💻" },
-    { title: "Exam Results", href: "/results", color: "from-amber-500 to-amber-600", icon: "🏆" },
-    { title: "Admit Cards", href: "/admit-cards", color: "from-rose-500 to-rose-600", icon: "🎫" },
-    { title: "IITs & IIMs", href: "/iits-iims", color: "from-orange-500 to-orange-600", icon: "🎓" },
+    { title: "Government Jobs", href: "/government-jobs", icon: "🏛️" },
+    { title: "Private Jobs", href: "/private-jobs", icon: "💼" },
+    { title: "Internships", href: "/internships", icon: "🎓" },
+    { title: "Scholarships", href: "/scholarships", icon: "🎯" },
+    { title: "Hackathons", href: "/college", icon: "💻" },
+    { title: "Exam Results", href: "/results", icon: "🏆" },
+    { title: "Admit Cards", href: "/admit-cards", icon: "🎫" },
+    { title: "IITs & IIMs", href: "/iits-iims", icon: "🎓" },
   ];
 
   return (
@@ -125,26 +124,19 @@ export default function Home() {
       {/* Hero */}
       <section className="relative px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 via-transparent to-transparent pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/3 rounded-full blur-3xl pointer-events-none" />
-
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 px-4 py-1.5 rounded-full text-xs font-semibold mb-8">
             <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
-            Live data from 40+ official sources
+            Live data from official government sites
           </div>
-
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-6 tracking-tight">
             <span className="text-white">Everything a student needs</span>
             <br />
-            <span className="bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">
-              in one place.
-            </span>
+            <span className="bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">in one place.</span>
           </h1>
-
           <p className="max-w-2xl mx-auto text-slate-400 text-base md:text-lg mb-10 leading-relaxed">
-            Government jobs, private careers, internships, scholarships, hackathons, exam results, and AI-powered career tools — updated in real-time from official sources.
+            Government jobs, private careers, internships, scholarships, hackathons, exam results — updated from official sources.
           </p>
-
           {/* Search */}
           <div className="max-w-2xl mx-auto relative">
             <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-1.5 flex gap-2 shadow-2xl shadow-black/20 backdrop-blur-sm">
@@ -163,27 +155,13 @@ export default function Home() {
                   className="flex-1 py-3.5 bg-transparent outline-none text-white text-sm placeholder:text-slate-500"
                 />
               </div>
-              <button
-                onClick={handleSearch}
-                className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-6 py-3.5 rounded-xl transition-all text-sm shrink-0"
-              >
-                Search
-              </button>
+              <button onClick={handleSearch} className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-6 py-3.5 rounded-xl transition-all text-sm shrink-0">Search</button>
             </div>
-
             {searchFocused && searchResults.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl shadow-black/50 overflow-hidden z-50 max-h-[400px] overflow-y-auto">
                 {searchResults.map((r, i) => (
-                  <Link
-                    key={i}
-                    href={r.href}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-slate-700/50 transition text-left border-b border-slate-700/50 last:border-0"
-                  >
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                      r.type === "govt" ? "bg-cyan-500/20 text-cyan-400" :
-                      r.type === "private" ? "bg-blue-500/20 text-blue-400" :
-                      "bg-emerald-500/20 text-emerald-400"
-                    }`}>
+                  <Link key={i} href={r.href} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-700/50 transition text-left border-b border-slate-700/50 last:border-0">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${r.type === "govt" ? "bg-cyan-500/20 text-cyan-400" : r.type === "private" ? "bg-blue-500/20 text-blue-400" : "bg-emerald-500/20 text-emerald-400"}`}>
                       {r.type === "govt" ? "GOVT" : r.type === "private" ? "PRIVATE" : "UPDATE"}
                     </span>
                     <span className="text-white text-sm line-clamp-1">{r.title}</span>
@@ -192,33 +170,26 @@ export default function Home() {
               </div>
             )}
           </div>
-
           <div className="flex flex-wrap justify-center gap-2 mt-5">
             {["UPSC", "SSC", "Banking", "Railways", "Google", "Amazon", "Internships", "Hackathons"].map((tag) => (
-              <button
-                key={tag}
-                onClick={() => { setSearchQuery(tag); }}
-                className="bg-slate-800/60 text-slate-400 px-3 py-1 rounded-full text-xs hover:text-cyan-400 hover:bg-slate-800 cursor-pointer transition-all border border-slate-700/50"
-              >
-                {tag}
-              </button>
+              <button key={tag} onClick={() => setSearchQuery(tag)} className="bg-slate-800/60 text-slate-400 px-3 py-1 rounded-full text-xs hover:text-cyan-400 hover:bg-slate-800 cursor-pointer transition-all border border-slate-700/50">{tag}</button>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Stats Bar */}
+      {/* Stats Bar - only shows real data counts */}
       <section className="px-4 sm:px-6 lg:px-8 py-4">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 max-w-5xl mx-auto">
           {[
-            { label: "Govt Jobs", count: `${govtJobsData.length}+`, href: "/government-exams", color: "text-cyan-400" },
-            { label: "Private Jobs", count: `${privateJobsData.length}+`, href: "/private-jobs", color: "text-blue-400" },
-            { label: "Internships", count: "500+", href: "/internships", color: "text-emerald-400" },
-            { label: "Hackathons", count: `${hackathons.length}+`, href: "/college", color: "text-purple-400" },
-            { label: "Scholarships", count: "100+", href: "/scholarships", color: "text-amber-400" },
+            { label: "Govt Jobs", count: govtJobsData.length, href: "/government-exams", color: "text-cyan-400" },
+            { label: "Private Jobs", count: privateJobsData.length, href: "/private-jobs", color: "text-blue-400" },
+            { label: "Updates", count: topUpdates.length, href: "/news", color: "text-emerald-400" },
+            { label: "Hackathons", count: hackathons.length, href: "/college", color: "text-purple-400" },
+            { label: "Results", count: results.length, href: "/results", color: "text-amber-400" },
           ].map((stat) => (
             <Link key={stat.label} href={stat.href} className="bg-slate-900/50 border border-slate-800/50 rounded-xl p-4 text-center hover:border-slate-700 hover:bg-slate-900 transition-all group">
-              <span className={`text-xl font-bold ${stat.color} block mt-1`}>{stat.count}</span>
+              <span className={`text-xl font-bold ${stat.color} block mt-1`}>{stat.count || <span className="inline-block w-5 h-4 bg-slate-800 animate-pulse rounded" />}</span>
               <span className="text-slate-500 text-xs group-hover:text-slate-300 transition">{stat.label}</span>
             </Link>
           ))}
@@ -230,39 +201,34 @@ export default function Home() {
         <h2 className="text-xl md:text-2xl font-bold text-white mb-6">Explore</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {quickLinks.map((item) => (
-            <Link
-              key={item.title}
-              href={item.href}
-              className="bg-slate-900/50 border border-slate-800/50 p-5 rounded-xl hover:border-slate-700 hover:bg-slate-900 transition-all group"
-            >
+            <Link key={item.title} href={item.href} className="bg-slate-900/50 border border-slate-800/50 p-5 rounded-xl hover:border-slate-700 hover:bg-slate-900 transition-all group">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{item.icon}</span>
-                <div>
-                  <h3 className="text-sm font-semibold text-white group-hover:text-cyan-400 transition">{item.title}</h3>
-                </div>
+                <h3 className="text-sm font-semibold text-white group-hover:text-cyan-400 transition">{item.title}</h3>
               </div>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Top Updates */}
+      {/* Top Updates - shows spinner while loading, keeps old data visible */}
       <section className="px-4 sm:px-6 lg:px-8 py-10">
-        <SectionHeader
-          title="Latest Updates"
-          subtitle={topUpdates.length > 0 ? "From SSC, IBPS, UPSC, Railways, PIB, NTA, UGC, PSUs" : "Loading live updates..."}
-          action={<Link href="/news" className="text-cyan-400 hover:text-cyan-300 text-sm font-semibold">View All</Link>}
-        />
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-bold text-white">Latest Updates</h2>
+            {updatesLive.isLoading && topUpdates.length > 0 && (
+              <p className="text-slate-500 text-xs mt-1 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
+                Updating...
+              </p>
+            )}
+          </div>
+          <Link href="/news" className="text-cyan-400 hover:text-cyan-300 text-sm font-semibold">View All</Link>
+        </div>
         {topUpdates.length > 0 ? (
           <div className="grid md:grid-cols-2 gap-3">
             {topUpdates.map((update, i) => (
-              <a
-                key={update.id}
-                href={update.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-slate-900/50 border border-slate-800/50 rounded-xl p-4 hover:border-slate-700 hover:bg-slate-900/80 transition-all flex items-start gap-4 group"
-              >
+              <a key={update.id} href={update.url} target="_blank" rel="noopener noreferrer" className="bg-slate-900/50 border border-slate-800/50 rounded-xl p-4 hover:border-slate-700 hover:bg-slate-900/80 transition-all flex items-start gap-4 group">
                 <span className="text-lg font-bold text-slate-700 min-w-[28px] text-right group-hover:text-cyan-400/50 transition">{i + 1}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -277,17 +243,34 @@ export default function Home() {
               </a>
             ))}
           </div>
+        ) : updatesLive.isLoading ? (
+          <div className="grid md:grid-cols-2 gap-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-slate-900/50 border border-slate-800/50 rounded-xl p-4 animate-pulse">
+                <div className="h-3 bg-slate-800 rounded w-1/4 mb-3" />
+                <div className="h-4 bg-slate-800 rounded w-3/4 mb-2" />
+                <div className="h-3 bg-slate-800 rounded w-1/3" />
+              </div>
+            ))}
+          </div>
         ) : (
-          <CardSkeleton count={4} />
+          <p className="text-slate-500 text-sm text-center py-8">No updates available</p>
         )}
       </section>
 
       {/* Trending Jobs */}
       <section className="px-4 sm:px-6 lg:px-8 py-10">
-        <SectionHeader
-          title="Trending Opportunities"
-          subtitle="Latest jobs across government and private sectors"
-        />
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-bold text-white">Trending Opportunities</h2>
+            {(govtLive.isLoading || privateLive.isLoading) && trendingJobs.length > 0 && (
+              <p className="text-slate-500 text-xs mt-1 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
+                Updating...
+              </p>
+            )}
+          </div>
+        </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {trendingJobs.map((job) => {
             const isGovt = "totalPosts" in job;
@@ -304,10 +287,8 @@ export default function Home() {
                 <h3 className="font-semibold text-white mb-1 line-clamp-2 text-sm">{job.title}</h3>
                 <p className="text-cyan-400 text-xs mb-3">{isGovt ? job.organization : ("company" in job ? job.company : "")}</p>
                 <div className="flex items-center justify-between text-xs text-slate-500 mt-auto">
-                  <span>{isGovt ? `${("totalPosts" in job ? job.totalPosts : 0).toLocaleString()} posts` : ("salary" in job ? job.salary : "")}</span>
-                  <Link href={isGovt ? "/government-exams" : "/private-jobs"} className="text-cyan-400 font-semibold group-hover:text-cyan-300 transition">
-                    Apply →
-                  </Link>
+                  <span>{isGovt ? "" : ("salary" in job ? job.salary : "")}</span>
+                  <Link href={isGovt ? "/government-exams" : "/private-jobs"} className="text-cyan-400 font-semibold group-hover:text-cyan-300 transition">Apply →</Link>
                 </div>
               </div>
             );
@@ -317,10 +298,10 @@ export default function Home() {
 
       {/* Exam Calendar */}
       <section className="px-4 sm:px-6 lg:px-8 py-10">
-        <SectionHeader
-          title="Exam Calendar 2026"
-          action={<Link href="/government-exams" className="text-cyan-400 hover:text-cyan-300 text-sm font-semibold">Full Calendar</Link>}
-        />
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-white">Exam Calendar 2026</h2>
+          <Link href="/government-exams" className="text-cyan-400 hover:text-cyan-300 text-sm font-semibold">Full Calendar</Link>
+        </div>
         <div className="bg-slate-900/50 border border-slate-800/50 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -368,7 +349,7 @@ export default function Home() {
           <div>
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-white">Latest Admit Cards</h2>
-              <Link href="/government-exams" className="text-cyan-400 text-xs font-semibold hover:text-cyan-300 transition">View All →</Link>
+              <Link href="/admit-cards" className="text-cyan-400 text-xs font-semibold hover:text-cyan-300 transition">View All →</Link>
             </div>
             <div className="space-y-2">
               {admitCards.map((card) => (
@@ -377,22 +358,17 @@ export default function Home() {
                     <h3 className="text-white font-medium text-sm line-clamp-1">{card.title}</h3>
                     <p className="text-slate-500 text-xs mt-0.5">{card.organization} — {card.examDate}</p>
                   </div>
-                  <span className={`shrink-0 ml-3 px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                    card.status === "available" ? "bg-emerald-500/15 text-emerald-400" :
-                    card.status === "declared" ? "bg-blue-500/15 text-blue-400" :
-                    "bg-amber-500/15 text-amber-400"
-                  }`}>
+                  <span className={`shrink-0 ml-3 px-2.5 py-1 rounded-full text-[10px] font-bold ${card.status === "available" ? "bg-emerald-500/15 text-emerald-400" : card.status === "declared" ? "bg-blue-500/15 text-blue-400" : "bg-amber-500/15 text-amber-400"}`}>
                     {card.status === "available" ? "Download" : card.status === "declared" ? "Released" : "Soon"}
                   </span>
                 </div>
               ))}
             </div>
           </div>
-
           <div>
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-white">Latest Results</h2>
-              <Link href="/government-exams" className="text-cyan-400 text-xs font-semibold hover:text-cyan-300 transition">View All →</Link>
+              <Link href="/results" className="text-cyan-400 text-xs font-semibold hover:text-cyan-300 transition">View All →</Link>
             </div>
             <div className="space-y-2">
               {results.map((result) => (
@@ -402,12 +378,8 @@ export default function Home() {
                     <p className="text-slate-500 text-xs mt-0.5">{result.organization} — {result.resultDate}</p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0 ml-3">
-                    {result.meritList && (
-                      <span className="bg-purple-500/15 text-purple-400 px-2 py-0.5 rounded text-[10px] font-bold">Merit</span>
-                    )}
-                    <a href={result.resultLink} target="_blank" rel="noopener noreferrer" className="bg-cyan-500/15 text-cyan-400 px-2.5 py-1 rounded-full text-[10px] font-bold hover:bg-cyan-500/25 transition">
-                      Check
-                    </a>
+                    {result.meritList && <span className="bg-purple-500/15 text-purple-400 px-2 py-0.5 rounded text-[10px] font-bold">Merit</span>}
+                    <a href={result.resultLink} target="_blank" rel="noopener noreferrer" className="bg-cyan-500/15 text-cyan-400 px-2.5 py-1 rounded-full text-[10px] font-bold hover:bg-cyan-500/25 transition">Check</a>
                   </div>
                 </div>
               ))}
@@ -416,12 +388,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trending Hackathons */}
+      {/* Hackathons */}
       <section className="px-4 sm:px-6 lg:px-8 py-10">
-        <SectionHeader
-          title="Trending Hackathons"
-          action={<Link href="/college" className="text-cyan-400 hover:text-cyan-300 text-sm font-semibold">View All</Link>}
-        />
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-white">Trending Hackathons</h2>
+          <Link href="/college" className="text-cyan-400 hover:text-cyan-300 text-sm font-semibold">View All</Link>
+        </div>
         <div className="grid md:grid-cols-3 gap-4">
           {hackathons.slice(0, 3).map((h) => (
             <div key={h.id} className="bg-slate-900/50 border border-slate-800/50 rounded-xl p-5 hover:border-purple-500/30 hover:bg-slate-900/80 transition-all group">
@@ -434,9 +406,7 @@ export default function Home() {
               <p className="text-slate-500 text-xs mb-3">{h.startDate} to {h.endDate}</p>
               <div className="flex items-center justify-between">
                 <span className="text-emerald-400 font-bold text-sm">{h.prize}</span>
-                <a href={h.applyUrl} target="_blank" rel="noopener noreferrer" className="text-cyan-400 text-xs font-semibold group-hover:text-cyan-300 transition">
-                  Apply →
-                </a>
+                <a href={h.applyUrl} target="_blank" rel="noopener noreferrer" className="text-cyan-400 text-xs font-semibold group-hover:text-cyan-300 transition">Apply →</a>
               </div>
             </div>
           ))}
@@ -446,19 +416,11 @@ export default function Home() {
       {/* CTA */}
       <section className="px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-gradient-to-r from-cyan-500/10 to-cyan-600/5 border border-cyan-500/20 rounded-2xl max-w-4xl mx-auto p-10 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-            Start Your Career Journey
-          </h2>
-          <p className="text-slate-400 mb-6 max-w-lg mx-auto">
-            Join thousands of students using SURATA to discover opportunities, prepare for exams, and advance their careers.
-          </p>
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Start Your Career Journey</h2>
+          <p className="text-slate-400 mb-6 max-w-lg mx-auto">Discover opportunities, prepare for exams, and advance your career.</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/government-jobs" className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-6 py-3 rounded-xl transition-all text-sm">
-              Explore Jobs
-            </Link>
-            <Link href="/ai-tools" className="bg-slate-800 hover:bg-slate-700 text-white font-bold px-6 py-3 rounded-xl transition-all text-sm border border-slate-700">
-              Try AI Tools
-            </Link>
+            <Link href="/government-jobs" className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-6 py-3 rounded-xl transition-all text-sm">Explore Jobs</Link>
+            <Link href="/ai-tools" className="bg-slate-800 hover:bg-slate-700 text-white font-bold px-6 py-3 rounded-xl transition-all text-sm border border-slate-700">Try AI Tools</Link>
           </div>
         </div>
       </section>
