@@ -6,11 +6,11 @@
     },
     {
       "path": "/api/cron/fast",
-      "schedule": "*/30 * * * *"
+      "schedule": "0 12 * * *"
     },
     {
       "path": "/api/cron/hourly",
-      "schedule": "0 * * * *"
+      "schedule": "0 18 * * *"
     }
   ]
 }
