@@ -57,10 +57,10 @@ export default function PrivateJobsPage() {
       <div className="bg-gradient-to-br from-slate-900 via-cyan-950 to-slate-900 border-b border-cyan-900 py-10 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-3xl md:text-4xl font-extrabold mb-2">
-            <span className="text-cyan-400">Private Jobs</span> — Live from Indeed, Naukri, LinkedIn & More
+            <span className="text-cyan-400">Private Jobs</span> — Updated Every Day
           </h1>
           <p className="text-slate-400 text-sm mb-5">
-            Real-time private sector job listings scraped from official career portals
+            Latest private sector openings with salary, location and apply links
           </p>
           <div className="flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto">
             <input

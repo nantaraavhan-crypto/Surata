@@ -1,5 +1,5 @@
 import * as cheerio from "cheerio";
-import { safeFetch } from "./utils/fetcher";
+import { safeFetch, resolveUrl } from "./utils/fetcher";
 import { dedupByTitle } from "./utils/dedup";
 import type { LiveResult } from "@/types";
 
@@ -12,6 +12,7 @@ interface LiveScraperConfig {
   organization: string;
   category: string;
   status: LiveResult["status"];
+  limit?: number;
 }
 
 function makeLiveItem(
@@ -21,7 +22,7 @@ function makeLiveItem(
 ): LiveResult {
   return {
     title,
-    url: href.startsWith("http") ? href : `${config.baseUrl}${href}`,
+    url: resolveUrl(href, config.baseUrl),
     organization: config.organization,
     category: config.category,
     status: config.status,
@@ -31,128 +32,163 @@ function makeLiveItem(
 }
 
 async function scrapeFromConfig(config: LiveScraperConfig): Promise<LiveResult[]> {
-  const html = await safeFetch(config.url);
+  const html = await safeFetch(config.url, { timeout: 5000 });
   if (!html) return [];
 
   const $ = cheerio.load(html);
   const items: LiveResult[] = [];
+  const seen = new Set<string>();
 
   $(config.selector).each((_, el) => {
-    const text = $(el).text().trim();
+    const text = $(el).text().replace(/\s+/g, " ").trim();
     const href = $(el).attr("href") || "";
-    if (text.length <= 10 || !href || !config.keywordFilter(text)) return;
-    items.push(makeLiveItem(config, text, href));
+    if (text.length <= 12 || text.length > 200 || !href) return;
+    if (!config.keywordFilter(text.toLowerCase())) return;
+
+    const item = makeLiveItem(config, text, href);
+    if (seen.has(item.url)) return;
+    seen.add(item.url);
+    items.push(item);
   });
 
-  return items.slice(0, 30);
+  return items.slice(0, config.limit ?? 40);
 }
 
-const SSC_CONFIGS: LiveScraperConfig[] = [
-  {
-    name: "ssc-results",
-    url: "https://ssc.nic.in/Portal/Results",
-    baseUrl: "https://ssc.nic.in",
-    selector: "table tr, .result-item, a",
-    keywordFilter: (t) => t.toLowerCase().includes("result") || t.toLowerCase().includes("merit"),
-    organization: "SSC",
-    category: "Staff Selection",
-    status: "declared",
-  },
-  {
-    name: "ssc-admit-cards",
-    url: "https://ssc.nic.in/Portal/AdmitCard",
-    baseUrl: "https://ssc.nic.in",
-    selector: "table tr, a",
-    keywordFilter: (t) => t.toLowerCase().includes("admit card") || t.toLowerCase().includes("exam city"),
-    organization: "SSC",
-    category: "Staff Selection",
-    status: "available",
-  },
-  {
-    name: "ssc-answer-keys",
-    url: "https://ssc.nic.in/Portal/AnswerKey",
-    baseUrl: "https://ssc.nic.in",
-    selector: "table tr, a",
-    keywordFilter: (t) => t.toLowerCase().includes("answer"),
-    organization: "SSC",
-    category: "Staff Selection",
-    status: "declared",
-  },
-];
+/**
+ * `ssc.nic.in` stopped resolving and `ibps.in` presents a certificate the
+ * runtime rejects; each attempt burned the full timeout, which is why this
+ * route took over ten seconds. FreeJobAlert carries the same notifications
+ * with clean titles, so the sections below replace those hosts outright.
+ */
+const FJA = "https://www.freejobalert.com";
+const FJA_BASE = "https://www.freejobalert.com";
+const ARTICLE = 'a[href*="/articles/"]';
 
-const IBPS_CONFIGS: LiveScraperConfig[] = [
+const RESULT_CONFIGS: LiveScraperConfig[] = [
   {
-    name: "ibps-results",
-    url: "https://www.ibps.in/webcontent/results",
-    baseUrl: "https://www.ibps.in",
-    selector: "a",
-    keywordFilter: (t) => t.toLowerCase().includes("result") || t.toLowerCase().includes("provisional allotment"),
-    organization: "IBPS",
-    category: "Banking",
+    name: "fja-results",
+    url: `${FJA}/exam-results/`,
+    baseUrl: FJA_BASE,
+    selector: ARTICLE,
+    keywordFilter: (t) => /result|merit list|score card|provisional|selected list/i.test(t),
+    organization: "Government of India",
+    category: "Result",
     status: "declared",
+    limit: 50,
   },
   {
-    name: "ibps-admit-cards",
-    url: "https://www.ibps.in/webcontent/admitcard",
-    baseUrl: "https://www.ibps.in",
-    selector: "a",
-    keywordFilter: (t) => t.toLowerCase().includes("call letter") || t.toLowerCase().includes("admit card"),
-    organization: "IBPS",
-    category: "Banking",
-    status: "available",
+    name: "fja-upsc-results",
+    url: `${FJA}/exam-results/`,
+    baseUrl: FJA_BASE,
+    selector: ARTICLE,
+    keywordFilter: (t) => /upsc|ias|ifs|civil/i.test(t),
+    organization: "UPSC",
+    category: "Civil Services",
+    status: "declared",
+    limit: 20,
   },
-];
-
-const UPSC_CONFIGS: LiveScraperConfig[] = [
   {
     name: "upsc-results",
     url: "https://upsc.gov.in/results-active",
     baseUrl: "https://upsc.gov.in",
     selector: "a",
-    keywordFilter: (t) =>
-      t.toLowerCase().includes("result") || t.toLowerCase().includes("final") || t.toLowerCase().includes("recommend"),
+    keywordFilter: (t) => /result|final|recommend/i.test(t),
     organization: "UPSC",
     category: "Civil Services",
     status: "declared",
+    limit: 25,
   },
-  {
-    name: "upsc-admit-cards",
-    url: "https://upsc.gov.in/admit-cards",
-    baseUrl: "https://upsc.gov.in",
-    selector: "a",
-    keywordFilter: (t) => t.toLowerCase().includes("admit card") || t.toLowerCase().includes("e-summon"),
-    organization: "UPSC",
-    category: "Civil Services",
-    status: "available",
-  },
-];
-
-const RAILWAY_CONFIGS: LiveScraperConfig[] = [
   {
     name: "railway-results",
     url: "https://indianrailways.gov.in/railwayboard/view_section.jsp?lang=0&id=0,1,304,366,554",
     baseUrl: "https://indianrailways.gov.in",
     selector: "a",
-    keywordFilter: (t) =>
-      t.toLowerCase().includes("result") || t.toLowerCase().includes("score card") || t.toLowerCase().includes("cbt"),
+    keywordFilter: (t) => /result|score card|cbt|merit/i.test(t),
     organization: "RRB",
     category: "Railways",
     status: "declared",
-  },
-  {
-    name: "railway-admit-cards",
-    url: "https://indianrailways.gov.in/railwayboard/view_section.jsp?lang=0&id=0,1,304,366,558",
-    baseUrl: "https://indianrailways.gov.in",
-    selector: "a",
-    keywordFilter: (t) =>
-      t.toLowerCase().includes("admit card") || t.toLowerCase().includes("exam city") || t.toLowerCase().includes("e-call"),
-    organization: "RRB",
-    category: "Railways",
-    status: "available",
+    limit: 25,
   },
 ];
 
-function categorizeSarkariLink(text: string): { category: string; status: LiveResult["status"] } | null {
+const ADMIT_CARD_CONFIGS: LiveScraperConfig[] = [
+  {
+    name: "fja-admit",
+    url: `${FJA}/admit-card/`,
+    baseUrl: FJA_BASE,
+    selector: ARTICLE,
+    keywordFilter: (t) => /admit card|exam city|call letter|e admit|hall ticket/i.test(t),
+    organization: "Government of India",
+    category: "Admit Card",
+    status: "available",
+    limit: 50,
+  },
+  {
+    name: "upsc-admit",
+    url: "https://upsc.gov.in/admit-cards",
+    baseUrl: "https://upsc.gov.in",
+    selector: "a",
+    keywordFilter: (t) => /admit card|e-summon|e summon/i.test(t),
+    organization: "UPSC",
+    category: "Civil Services",
+    status: "available",
+    limit: 25,
+  },
+  {
+    name: "railway-admit",
+    url: "https://indianrailways.gov.in/railwayboard/view_section.jsp?lang=0&id=0,1,304,366,558",
+    baseUrl: "https://indianrailways.gov.in",
+    selector: "a",
+    keywordFilter: (t) => /admit card|exam city|e-call|e call/i.test(t),
+    organization: "RRB",
+    category: "Railways",
+    status: "available",
+    limit: 25,
+  },
+];
+
+const ANSWER_KEY_CONFIGS: LiveScraperConfig[] = [
+  {
+    name: "fja-answer-key",
+    url: `${FJA}/answer-key/`,
+    baseUrl: FJA_BASE,
+    selector: ARTICLE,
+    keywordFilter: (t) => /answer key|response sheet|answer sheet|key answer/i.test(t),
+    organization: "Government of India",
+    category: "Answer Key",
+    status: "declared",
+    limit: 50,
+  },
+];
+
+const JOB_CONFIGS: LiveScraperConfig[] = [
+  {
+    name: "fja-jobs",
+    url: `${FJA}/government-jobs/`,
+    baseUrl: FJA_BASE,
+    selector: ARTICLE,
+    keywordFilter: (t) => /recruitment|online form|apply|vacancy|posts/i.test(t),
+    organization: "Government of India",
+    category: "Job",
+    status: "live",
+    limit: 50,
+  },
+  {
+    name: "fja-latest-jobs",
+    url: `${FJA}/latest-notifications/`,
+    baseUrl: FJA_BASE,
+    selector: ARTICLE,
+    keywordFilter: (t) => /recruitment|online form|apply online|apply offline|vacancy/i.test(t),
+    organization: "Government of India",
+    category: "Job",
+    status: "live",
+    limit: 50,
+  },
+];
+
+function categorizeSarkariLink(
+  text: string
+): { category: string; status: LiveResult["status"] } | null {
   const t = text.toLowerCase();
   if (t.includes("result") || t.includes("merit")) return { category: "Result", status: "declared" };
   if (t.includes("admit card") || t.includes("exam city")) return { category: "Admit Card", status: "available" };
@@ -162,7 +198,7 @@ function categorizeSarkariLink(text: string): { category: string; status: LiveRe
 }
 
 async function scrapeSarkariResultAll() {
-  const html = await safeFetch("https://www.sarkariresult.com/");
+  const html = await safeFetch("https://www.sarkariresult.com/", { timeout: 5000 });
   if (!html) return { results: [], admitCards: [], answerKeys: [], latestJobs: [] };
 
   const $ = cheerio.load(html);
@@ -181,14 +217,14 @@ async function scrapeSarkariResultAll() {
   };
 
   $("a").each((_, el) => {
-    const text = $(el).text().trim();
+    const text = $(el).text().replace(/\s+/g, " ").trim();
     const href = $(el).attr("href") || "";
-    if (text.length < 15 || !href) return;
+    if (text.length < 15 || !href || text.length > 200) return;
 
     const categorization = categorizeSarkariLink(text);
     if (!categorization) return;
 
-    const url = href.startsWith("http") ? href : `https://www.sarkariresult.com${href}`;
+    const url = resolveUrl(href, "https://www.sarkariresult.com");
     const bucket = bucketMap[categorization.category];
 
     buckets[bucket].push({
@@ -210,6 +246,15 @@ async function scrapeSarkariResultAll() {
   };
 }
 
+async function collect(configs: LiveScraperConfig[]): Promise<LiveResult[]> {
+  const settled = await Promise.allSettled(configs.map(scrapeFromConfig));
+  const all: LiveResult[] = [];
+  for (const r of settled) {
+    if (r.status === "fulfilled") all.push(...r.value);
+  }
+  return dedupByTitle(all, 80);
+}
+
 export async function scrapeEverything(): Promise<{
   results: LiveResult[];
   admitCards: LiveResult[];
@@ -217,39 +262,25 @@ export async function scrapeEverything(): Promise<{
   latestJobs: LiveResult[];
   scrapedAt: string;
 }> {
-  const allConfigs = [...SSC_CONFIGS, ...IBPS_CONFIGS, ...UPSC_CONFIGS, ...RAILWAY_CONFIGS];
-
-  const [orgResults, sarkari] = await Promise.allSettled([
-    Promise.all(allConfigs.map(scrapeFromConfig)),
-    scrapeSarkariResultAll(),
-  ]);
-
-  const allResults: LiveResult[] = [];
-  const allAdmitCards: LiveResult[] = [];
-  const allAnswerKeys: LiveResult[] = [];
-  const allJobs: LiveResult[] = [];
-
-  if (orgResults.status === "fulfilled") {
-    for (const items of orgResults.value) {
-      for (const item of items) {
-        if (item.status === "declared") allResults.push(item);
-        else if (item.status === "available") allAdmitCards.push(item);
-      }
-    }
-  }
-
-  if (sarkari.status === "fulfilled") {
-    allResults.push(...sarkari.value.results);
-    allAdmitCards.push(...sarkari.value.admitCards);
-    allAnswerKeys.push(...sarkari.value.answerKeys);
-    allJobs.push(...sarkari.value.latestJobs);
-  }
+  const [results, admitCards, answerKeys, latestJobs, sarkari] =
+    await Promise.all([
+      collect(RESULT_CONFIGS),
+      collect(ADMIT_CARD_CONFIGS),
+      collect(ANSWER_KEY_CONFIGS),
+      collect(JOB_CONFIGS),
+      scrapeSarkariResultAll().catch(() => ({
+        results: [],
+        admitCards: [],
+        answerKeys: [],
+        latestJobs: [],
+      })),
+    ]);
 
   return {
-    results: dedupByTitle(allResults),
-    admitCards: dedupByTitle(allAdmitCards),
-    answerKeys: dedupByTitle(allAnswerKeys),
-    latestJobs: dedupByTitle(allJobs),
+    results: dedupByTitle([...results, ...sarkari.results], 80),
+    admitCards: dedupByTitle([...admitCards, ...sarkari.admitCards], 80),
+    answerKeys: dedupByTitle([...answerKeys, ...sarkari.answerKeys], 80),
+    latestJobs: dedupByTitle([...latestJobs, ...sarkari.latestJobs], 80),
     scrapedAt: new Date().toISOString(),
   };
 }

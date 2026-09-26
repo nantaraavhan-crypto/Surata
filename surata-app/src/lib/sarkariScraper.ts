@@ -54,7 +54,7 @@ function extractLinks($: cheerio.CheerioAPI, config: SarkariSectionConfig): Sark
 }
 
 async function scrapeSection(sectionName: string): Promise<SarkariItem[]> {
-  const html = await safeFetch("https://www.sarkariresult.com/", { revalidate: 1800 });
+  const html = await safeFetch("https://www.sarkariresult.com/", { revalidate: 60 });
   if (!html) return [];
 
   const $ = cheerio.load(html);

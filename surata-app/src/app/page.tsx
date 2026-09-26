@@ -127,7 +127,7 @@ export default function Home() {
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 px-4 py-1.5 rounded-full text-xs font-semibold mb-8">
             <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
-            Live data from official government sites
+            Updated every hour — never miss a deadline
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-6 tracking-tight">
             <span className="text-white">Everything a student needs</span>
@@ -135,7 +135,7 @@ export default function Home() {
             <span className="bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">in one place.</span>
           </h1>
           <p className="max-w-2xl mx-auto text-slate-400 text-base md:text-lg mb-10 leading-relaxed">
-            Government jobs, private careers, internships, scholarships, hackathons, exam results — updated from official sources.
+            Government jobs, private careers, internships, scholarships, hackathons, exam results — all in one place.
           </p>
           {/* Search */}
           <div className="max-w-2xl mx-auto relative">

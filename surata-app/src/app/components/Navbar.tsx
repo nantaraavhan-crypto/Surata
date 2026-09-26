@@ -1,19 +1,19 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { DeadlineBadge } from "./DeadlineAlerts";
 
 const NAV_LINKS = [
-  { href: "/government-jobs", label: "Govt Jobs", icon: "🏛️" },
-  { href: "/private-jobs", label: "Private Jobs", icon: "💼" },
-  { href: "/internships", label: "Internships", icon: "🎓" },
-  { href: "/scholarships", label: "Scholarships", icon: "🎯" },
-  { href: "/results", label: "Results", icon: "🏆" },
-  { href: "/admit-cards", label: "Admit Cards", icon: "🎫" },
-  { href: "/iits-iims", label: "IITs & IIMs", icon: "🎓" },
-  { href: "/college", label: "College", icon: "📚" },
-  { href: "/ai-tools", label: "AI Tools", icon: "🤖" },
+  { href: "/government-jobs", label: "Govt Jobs" },
+  { href: "/private-jobs", label: "Private Jobs" },
+  { href: "/internships", label: "Internships" },
+  { href: "/scholarships", label: "Scholarships" },
+  { href: "/results", label: "Results" },
+  { href: "/admit-cards", label: "Admit Cards" },
+  { href: "/iits-iims", label: "IITs & IIMs" },
+  { href: "/college", label: "College" },
+  { href: "/ai-tools", label: "AI Tools" },
 ];
 
 const SECONDARY_LINKS = [
@@ -34,6 +34,7 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
+  const router = useRouter();
   const menuRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -66,7 +67,7 @@ export default function Navbar() {
 
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
-    window.location.href = `/api/search?q=${encodeURIComponent(searchQuery)}`;
+    router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
     setSearchOpen(false);
     setSearchQuery("");
   };
@@ -97,6 +98,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  prefetch={true}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                     isActive
                       ? "bg-cyan-500/15 text-cyan-400"
@@ -116,6 +118,7 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
+                    prefetch={true}
                     className="block px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition"
                   >
                     {link.label}
@@ -128,9 +131,10 @@ export default function Navbar() {
           <div className="flex items-center gap-2">
             <Link
               href="/tracker"
+              prefetch={true}
               className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all"
             >
-              📋 Tracker <DeadlineBadge />
+              Tracker <DeadlineBadge />
             </Link>
 
             <button
@@ -197,13 +201,13 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  prefetch={true}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                     isActive
                       ? "bg-cyan-500/15 text-cyan-400"
                       : "text-slate-300 hover:text-white hover:bg-slate-800/50"
                   }`}
                 >
-                  <span className="text-lg">{link.icon}</span>
                   {link.label}
                 </Link>
               );
@@ -218,6 +222,7 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
+                prefetch={true}
                 className="block px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all"
               >
                 {link.label}

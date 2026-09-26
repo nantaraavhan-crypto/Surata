@@ -16,8 +16,8 @@ async function safeFetch(url: string): Promise<string | null> {
   try {
     const res = await fetch(url, {
       headers: { "User-Agent": UA, Accept: "text/html,application/xhtml+xml" },
-      signal: AbortSignal.timeout(12000),
-      next: { revalidate: 900 },
+      signal: AbortSignal.timeout(5000),
+      next: { revalidate: 60 },
     });
     if (!res.ok) return null;
     return await res.text();
@@ -229,25 +229,16 @@ export async function scrapeRRB(): Promise<OfficialUpdate[]> {
 
 // ========== MASTER FUNCTION ==========
 export async function scrapeAllOfficialUpdates(): Promise<OfficialUpdate[]> {
-  const [pib, empNews, nta, ugc, aicte, eduMin, rrb] = await Promise.allSettled([
-    scrapePIB(),
-    scrapeEmploymentNews(),
-    scrapeNTA(),
-    scrapeUGC(),
-    scrapeAICTE(),
-    scrapeEducationMinistry(),
-    scrapeRRB(),
-  ]);
+  // Only the sources that still answer are called. Employment News, NTA,
+  // AICTE, the Ministry of Education and rrbapply.gov.in each returned an
+  // empty document — NTA and rrbapply fail outright on a certificate and DNS
+  // error — and together they spent seven seconds per refresh for nothing.
+  const [pib, ugc] = await Promise.allSettled([scrapePIB(), scrapeUGC()]);
 
   const all: OfficialUpdate[] = [];
 
   if (pib.status === "fulfilled") all.push(...pib.value);
-  if (empNews.status === "fulfilled") all.push(...empNews.value);
-  if (nta.status === "fulfilled") all.push(...nta.value);
   if (ugc.status === "fulfilled") all.push(...ugc.value);
-  if (aicte.status === "fulfilled") all.push(...aicte.value);
-  if (eduMin.status === "fulfilled") all.push(...eduMin.value);
-  if (rrb.status === "fulfilled") all.push(...rrb.value);
 
   const seen = new Set<string>();
   return all.filter((item) => {

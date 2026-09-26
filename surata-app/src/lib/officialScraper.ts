@@ -18,7 +18,7 @@ async function safeFetch(url: string): Promise<string | null> {
   try {
     const res = await fetch(url, {
       headers: { "User-Agent": UA, Accept: "text/html,application/xhtml+xml", Referer: SR },
-      signal: AbortSignal.timeout(12000),
+      signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) return null;
     return await res.text();
@@ -222,10 +222,12 @@ export async function scrapeAllOfficialLinks(): Promise<{
 }> {
   const homepage = await scrapeHomepage();
 
-  // Group by section
+  // Group by section. The detail-page crawl below costs one request per entry,
+  // so the per-section caps are what keep this route inside a couple of
+  // seconds instead of ten.
   const resultPages = homepage.filter((p) => p.section === "result").slice(0, 20);
   const admitPages = homepage.filter((p) => p.section === "admit_card").slice(0, 20);
-  const answerPages = homepage.filter((p) => p.section === "answer_key").slice(0, 20);
+  const answerPages = homepage.filter((p) => p.section === "answer_key").slice(0, 16);
   const jobPages = homepage.filter((p) => p.section === "job").slice(0, 20);
 
   const allPages = [...resultPages, ...admitPages, ...answerPages, ...jobPages];
@@ -236,7 +238,7 @@ export async function scrapeAllOfficialLinks(): Promise<{
   const answerKeys: OfficialLink[] = [];
   const latestJobs: OfficialLink[] = [];
 
-  const batchSize = 5;
+  const batchSize = 12;
   for (let i = 0; i < allPages.length; i += batchSize) {
     const batch = allPages.slice(i, i + batchSize);
     const batchResults = await Promise.allSettled(

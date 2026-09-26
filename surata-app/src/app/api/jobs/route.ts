@@ -1,10 +1,11 @@
 import { createCachedHandler } from "../utils";
 import { scrapeAllGovtJobs } from "@/lib/scraper";
 import type { GovtJob } from "@/types";
+export const maxDuration = 60;
 
 export const GET = createCachedHandler({
   fetcher: scrapeAllGovtJobs,
-  cacheDurationMs: 30 * 60 * 1000,
+  cacheDurationMs: 60 * 1000,
   filterFn: (jobs, searchParams) => {
     const search = searchParams.get("search") || "";
     const category = searchParams.get("category") || "All";

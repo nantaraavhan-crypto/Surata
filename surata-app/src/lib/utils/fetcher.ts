@@ -18,7 +18,9 @@ export async function safeFetch(
   url: string,
   opts: FetchOptions = {}
 ): Promise<string | null> {
-  const { timeout = 15000, referer, revalidate = 900, headers = {} } = opts;
+  // A dead host must not hold up the whole response: 8s is long enough for a
+  // slow government site but short enough that one failure stays invisible.
+  const { timeout = 8000, referer, revalidate = 60, headers = {} } = opts;
   try {
     const res = await fetch(url, {
       headers: {

@@ -66,7 +66,12 @@ function extractOfficialDomain(url: string): string | null {
 async function followAndExtractOfficial(
   aggregatorUrl: string
 ): Promise<{ officialUrl: string; officialSource: string } | null> {
-  const html = await safeFetch(aggregatorUrl, { referer: aggregatorUrl });
+  // Detail pages are small and only needed for their outbound link, so a short
+  // timeout keeps one slow host from holding up a whole batch.
+  const html = await safeFetch(aggregatorUrl, {
+    referer: aggregatorUrl,
+    timeout: 4000,
+  });
   if (!html) return null;
 
   const $ = cheerio.load(html);
@@ -186,8 +191,12 @@ async function scrapeAggregator(
   prefix: string,
   listUrl: string,
   baseUrl: string,
-  batchSize = 5,
-  maxLinks = 40
+  // Was 5 links per serial batch across 40 links — 80 detail requests walked
+  // eight at a time, which is what made this the slowest route in the app.
+  // Wider batches mean the wall clock is decided by the slowest request
+  // rather than by a queue.
+  batchSize = 15,
+  maxLinks = 30
 ): Promise<ComprehensiveJob[]> {
   const jobs: ComprehensiveJob[] = [];
   const html = await safeFetch(listUrl, { referer: baseUrl });
@@ -258,9 +267,6 @@ export async function scrapeComprehensiveJobs(): Promise<{
   const results = await Promise.allSettled([
     scrapeAggregator("fja", "https://www.freejobalert.com/sarkari-naukri/", "https://www.freejobalert.com/"),
     scrapeAggregator("gja", "https://govtjobsalert.in/", "https://govtjobsalert.in/"),
-    scrapeDirectSource("en", "https://employmentnews.gov.in/", "https://employmentnews.gov.in/", {
-      organization: "Employment News",
-    }),
     scrapeDirectSource("pib", "https://pib.gov.in/allRel.aspx", "https://pib.gov.in/", {
       organization: "PIB",
     }),
@@ -272,16 +278,8 @@ export async function scrapeComprehensiveJobs(): Promise<{
       organization: "ISRO",
       category: "PSU",
     }),
-    scrapeDirectSource("nta", "https://nta.ac.in/important-announcements", "https://nta.ac.in/", {
-      organization: "NTA",
-      category: "NTA Exams",
-    }),
     scrapeDirectSource("ugc", "https://www.ugc.gov.in/important-announcements", "https://www.ugc.gov.in/", {
       organization: "UGC",
-      category: "Education",
-    }),
-    scrapeDirectSource("aicte", "https://www.aicte-india.org/notices", "https://www.aicte-india.org/", {
-      organization: "AICTE",
       category: "Education",
     }),
   ]);

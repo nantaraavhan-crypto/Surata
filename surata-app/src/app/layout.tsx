@@ -134,11 +134,13 @@ export default function RootLayout({
                 <span className="text-sm font-bold text-white">SURATA</span>
               </div>
               <p className="text-xs text-slate-500 text-center">
-                &copy; {new Date().getFullYear()} SURATA. All rights reserved. Data sourced from official government and aggregator websites.
+                &copy; {new Date().getFullYear()} SURATA. All rights reserved.
               </p>
               <div className="flex items-center gap-4">
                 <a href="mailto:surata12q@gmail.com" className="text-xs text-slate-500 hover:text-cyan-400 transition">Contact</a>
                 <a href="/about" className="text-xs text-slate-500 hover:text-cyan-400 transition">About</a>
+                <a href="/privacy" className="text-xs text-slate-500 hover:text-cyan-400 transition">Privacy</a>
+                <a href="/terms" className="text-xs text-slate-500 hover:text-cyan-400 transition">Terms</a>
               </div>
             </div>
           </div>

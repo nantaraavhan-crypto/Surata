@@ -44,7 +44,7 @@ export default function ScholarshipsPage() {
     <div className="min-h-screen bg-slate-950 text-white">
       <HeroSection
         title="Scholarships"
-        description="Real-time scholarship listings from scholarships.gov.in, Buddy4Study, AICTE & more"
+        description="Fellowships, grants and scholarships with eligibility and last dates"
         accentColor="purple"
       >
         <div className="max-w-3xl mx-auto">

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { privateJobs, privateJobDepartments, privateJobLocations } from "../../data/privateJobs";
+export const maxDuration = 60;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

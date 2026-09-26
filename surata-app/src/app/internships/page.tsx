@@ -46,7 +46,7 @@ export default function InternshipsPage() {
     <div className="min-h-screen bg-slate-950 text-white">
       <HeroSection
         title="Internships"
-        description="Real-time internship listings from top platforms across India"
+        description="Paid and unpaid internships across India — apply before the deadline"
         accentColor="cyan"
       >
         <div className="max-w-3xl mx-auto">

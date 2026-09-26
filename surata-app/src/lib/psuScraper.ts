@@ -23,8 +23,8 @@ async function safeFetch(url: string, referer?: string): Promise<string | null> 
         "Accept-Language": "en-US,en;q=0.5",
         ...(referer ? { Referer: referer } : {}),
       },
-      signal: AbortSignal.timeout(15000),
-      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(4000),
+      next: { revalidate: 300 },
     });
     if (!res.ok) return null;
     return await res.text();

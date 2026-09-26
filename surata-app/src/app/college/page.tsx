@@ -88,7 +88,7 @@ function HackathonsTab() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-white">Live Hackathons from Devfolio, MLH, HackerEarth & More</h2>
+        <h2 className="text-2xl font-bold text-white">Ongoing Hackathons & Competitions</h2>
         {lastUpdated && (
           <span className="text-slate-500 text-xs">Updated <RelativeTime date={lastUpdated} /></span>
         )}

@@ -1,26 +1,22 @@
 import { NextResponse } from "next/server";
 import { scrapeAllSarkariSections } from "@/lib/sarkariScraper";
 import { MemoryCache } from "@/lib/utils/cache";
+import { cachedData } from "@/app/api/utils";
+export const maxDuration = 60;
 
 type SarkariData = Awaited<ReturnType<typeof scrapeAllSarkariSections>>;
-const cache = new MemoryCache<SarkariData>(30 * 60 * 1000);
+const cache = new MemoryCache<SarkariData>(60 * 1000);
+// Built once at module scope so every invocation reads the same shared
+// Data Cache entry instead of re-scraping on a fresh instance.
+const sharedSarkari = cachedData(scrapeAllSarkariSections);
 
 export async function GET(request: Request) {
+  let data: SarkariData;
   try {
-    if (cache.isStale()) {
-      const data = await scrapeAllSarkariSections();
-      cache.set(data);
-    }
+    data = await cache.getWithRevalidate(sharedSarkari);
   } catch (e) {
     console.error("Scrape failed:", e);
-    if (!cache.get()) {
-      return NextResponse.json({ error: "Scrape not available" }, { status: 503 });
-    }
-  }
-
-  const data = cache.get();
-  if (!data) {
-    return NextResponse.json({ error: "No data available" }, { status: 503 });
+    return NextResponse.json({ error: "Scrape not available" }, { status: 503 });
   }
 
   const { searchParams } = new URL(request.url);

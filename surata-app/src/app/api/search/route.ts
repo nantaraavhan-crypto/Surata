@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { MemoryCache } from "@/lib/utils/cache";
+import { cachedData } from "@/app/api/utils";
+export const maxDuration = 60;
 
 interface SearchResult {
   id: string;
@@ -11,7 +13,10 @@ interface SearchResult {
   date: string;
 }
 
-const cache = new MemoryCache<SearchResult[]>(10 * 60 * 1000);
+const cache = new MemoryCache<SearchResult[]>(60 * 1000);
+// Built once at module scope so every invocation reads the same shared
+// Data Cache entry instead of fanning out to six endpoints on a fresh instance.
+const sharedSearch = cachedData(fetchAllData);
 
 function matchesQuery(item: { title: string; category?: string; source?: string; organization?: string }, query: string): boolean {
   const q = query.toLowerCase();
@@ -150,7 +155,7 @@ async function fetchAllData(): Promise<SearchResult[]> {
     fetchers.map(async (f) => {
       try {
         const res = await fetch(`${HOST}${f.url}`, {
-          signal: AbortSignal.timeout(20000),
+          signal: AbortSignal.timeout(8000),
           next: { revalidate: 300 },
         });
         if (!res.ok) return [];
@@ -187,15 +192,10 @@ export async function GET(request: Request) {
   }
 
   try {
-    if (cache.isStale()) {
-      const allData = await fetchAllData();
-      cache.set(allData);
-    }
+    await cache.getWithRevalidate(sharedSearch);
   } catch (e) {
     console.error("Search data fetch failed:", e);
-    if (!cache.get()) {
-      return NextResponse.json({ results: [], total: 0, query });
-    }
+    return NextResponse.json({ results: [], total: 0, query });
   }
 
   const allData = cache.get() || [];
