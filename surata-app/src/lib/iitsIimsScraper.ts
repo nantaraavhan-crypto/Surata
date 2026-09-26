@@ -14,46 +14,31 @@ export interface IITIIMNews {
 }
 
 /**
- * Only these two aggregators were worth calling: the previous version walked
- * 40 institutional sites eight at a time with a 15s timeout each — 35 seconds
- * end to end — and then pushed every navigation link on those pages into the
- * feed, which is where the 1500 junk entries came from.
+ * Two aggregators, both verified to still return content.
+ *
+ * The freejobalert IIT/IIM recruitment paths are gone: those URLs now return
+ * an empty body while the site root answers normally, so it is the path that
+ * died rather than the host — and one entry was a duplicate of another.
+ *
+ * Every pattern below carries the `i` flag. Without it they matched nothing
+ * at all, because titles arrive as "IIT Bombay Faculty Recruitment" while the
+ * patterns were written in lower case. That one omission had quietly taken
+ * this feed from ~90 items down to 1.
  */
 const AGGREGATORS = [
-  {
-    name: "IIT",
-    url: "https://www.freejobalert.com/iit-recruitment/",
-    referer: "https://www.freejobalert.com/",
-    base: "https://www.freejobalert.com",
-    keywords: /iit|iim|faculty|recruitment|admission|entrance/,
-  },
-  {
-    name: "IIM",
-    url: "https://www.freejobalert.com/iim-recruitment/",
-    referer: "https://www.freejobalert.com/",
-    base: "https://www.freejobalert.com",
-    keywords: /iit|iim|faculty|recruitment|admission|entrance/,
-  },
   {
     name: "IIT",
     url: "https://www.facultyplus.com/category/iit/",
     referer: "https://www.facultyplus.com/",
     base: "https://www.facultyplus.com",
-    keywords: /iit|iim|faculty|recruitment|professor|associate|assistant professor/,
+    keywords: /iit|iim|faculty|recruitment|professor|associate|assistant professor/i,
   },
   {
     name: "IIM",
     url: "https://www.facultyplus.com/category/iim/",
     referer: "https://www.facultyplus.com/",
     base: "https://www.facultyplus.com",
-    keywords: /iit|iim|faculty|recruitment|professor/,
-  },
-  {
-    name: "IIT",
-    url: "https://www.freejobalert.com/iim-recruitment/",
-    referer: "https://www.freejobalert.com/",
-    base: "https://www.freejobalert.com",
-    keywords: /iim|faculty|recruitment/,
+    keywords: /iit|iim|faculty|recruitment|professor/i,
   },
 ];
 
