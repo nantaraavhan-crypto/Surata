@@ -24,6 +24,9 @@ on:
     branches: [main]
     paths:
       - "surata-app/**"
+      # Without this the workflow's own edits would never match, so a change
+      # to this file could not be used to test that Actions runs at all.
+      - ".github/workflows/refresh.yml"
 
 # One refresh at a time; a slow run should not be stacked behind a fast one.
 concurrency:
