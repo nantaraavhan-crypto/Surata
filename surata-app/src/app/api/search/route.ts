@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { MemoryCache } from "@/lib/utils/cache";
-import { cachedData } from "@/app/api/utils";
+import { cachedDataWithFallback } from "@/app/api/utils";
 export const maxDuration = 60;
 
 interface SearchResult {
@@ -16,7 +16,7 @@ interface SearchResult {
 const cache = new MemoryCache<SearchResult[]>(60 * 1000);
 // Built once at module scope so every invocation reads the same shared
 // Data Cache entry instead of fanning out to six endpoints on a fresh instance.
-const sharedSearch = cachedData(fetchAllData);
+const sharedSearch = cachedDataWithFallback(fetchAllData);
 
 function matchesQuery(item: { title: string; category?: string; source?: string; organization?: string }, query: string): boolean {
   const q = query.toLowerCase();

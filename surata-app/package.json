@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "warm": "node scripts/warm.mjs",
+    "test:cache": "npx tsx scripts/test-zero-guard.ts",
     "deploy": "vercel --prod --yes && node scripts/warm.mjs"
   },
   "dependencies": {

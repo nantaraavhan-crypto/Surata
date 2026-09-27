@@ -4,7 +4,7 @@ import { scrapeAllOfficialUpdates, type OfficialUpdate } from "@/lib/officialGov
 import { scrapeAllPSUUpdates, type PSUUpdate } from "@/lib/psuScraper";
 import { dedupByTitle } from "@/lib/utils/dedup";
 import { MemoryCache } from "@/lib/utils/cache";
-import { cachedData } from "@/app/api/utils";
+import { cachedDataWithFallback } from "@/app/api/utils";
 export const maxDuration = 60;
 
 interface UpdateItem {
@@ -68,7 +68,7 @@ function psuItemToUpdate(item: PSUUpdate): UpdateItem {
 const cache = new MemoryCache<UpdateItem[]>(60 * 1000);
 // Built once at module scope so every invocation reads the same shared
 // Data Cache entry instead of re-scraping on a fresh instance.
-const sharedUpdates = cachedData(fetchUpdates);
+const sharedUpdates = cachedDataWithFallback(fetchUpdates);
 
 async function fetchUpdates(): Promise<UpdateItem[]> {
   const [liveData, officialSites, psuData] = await Promise.allSettled([

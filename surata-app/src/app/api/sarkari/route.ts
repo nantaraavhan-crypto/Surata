@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { scrapeAllSarkariSections } from "@/lib/sarkariScraper";
 import { MemoryCache } from "@/lib/utils/cache";
-import { cachedData } from "@/app/api/utils";
+import { cachedDataWithFallback } from "@/app/api/utils";
 export const maxDuration = 60;
 
 type SarkariData = Awaited<ReturnType<typeof scrapeAllSarkariSections>>;
 const cache = new MemoryCache<SarkariData>(60 * 1000);
 // Built once at module scope so every invocation reads the same shared
 // Data Cache entry instead of re-scraping on a fresh instance.
-const sharedSarkari = cachedData(scrapeAllSarkariSections);
+const sharedSarkari = cachedDataWithFallback(scrapeAllSarkariSections);
 
 export async function GET(request: Request) {
   let data: SarkariData;
