@@ -17,6 +17,13 @@ on:
     - cron: "*/5 * * * *"
   # Lets the workflow be run by hand from the Actions tab.
   workflow_dispatch:
+  # Refresh immediately after each deploy rather than waiting for the next
+  # scheduled tick, and give the scheduler something to prove itself with on
+  # the very first push.
+  push:
+    branches: [main]
+    paths:
+      - "surata-app/**"
 
 # One refresh at a time; a slow run should not be stacked behind a fast one.
 concurrency:
