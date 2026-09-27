@@ -1,0 +1,43 @@
+name: Refresh site data
+
+# Keeps https://surata.vercel.app fresh without anything running on a
+# desktop. Every request below lands on an endpoint whose snapshot may have
+# aged past its five-minute window, which forces a real re-scrape server-side.
+#
+# Five minutes is deliberate, not arbitrary: the app's shared snapshot expires
+# every 300 seconds, so hitting it *more* often would not refresh it faster —
+# it would just burn CI minutes re-reading an entry that is still fresh.
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  # Lets the workflow be run by hand from the Actions tab.
+  workflow_dispatch:
+
+# One refresh at a time; a slow run should not be stacked behind a fast one.
+concurrency:
+  group: refresh-site-data
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    # The slowest endpoint has been observed near 35s; this leaves generous
+    # headroom before GitHub kills it and reports a false failure.
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Refresh and verify every section
+        run: node scripts/refresh.mjs
+        env:
+          SITE_URL: https://surata.vercel.app
