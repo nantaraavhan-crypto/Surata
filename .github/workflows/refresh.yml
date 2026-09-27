@@ -7,6 +7,10 @@ name: Refresh site data
 # Five minutes is deliberate, not arbitrary: the app's shared snapshot expires
 # every 300 seconds, so hitting it *more* often would not refresh it faster —
 # it would just burn CI minutes re-reading an entry that is still fresh.
+#
+# NOTE: this file must live at the repository root, because the app itself
+# sits in the `surata-app/` subdirectory. GitHub only discovers workflows at
+# `<repo-root>/.github/workflows/`.
 
 on:
   schedule:
@@ -28,6 +32,10 @@ jobs:
     # The slowest endpoint has been observed near 35s; this leaves generous
     # headroom before GitHub kills it and reports a false failure.
     timeout-minutes: 10
+    defaults:
+      run:
+        # The Next.js app and its scripts live one directory down.
+        working-directory: surata-app
     steps:
       - name: Checkout
         uses: actions/checkout@v4
